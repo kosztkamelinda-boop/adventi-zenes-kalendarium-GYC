@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adventi dallamok</title>
+<style>
+:root {
+  --site-primary: #174a3b;
+  --site-on-primary: #ffffff;
+  --site-secondary: #a62f3b;
+  --site-on-secondary: #ffffff;
+  --site-background: #f7f0e4;
+  --site-on-background: #26372f;
+  --site-font-body: 'Trebuchet MS', Arial, sans-serif;
+  --site-font-heading: Georgia, 'Times New Roman', serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); color: var(--site-on-background); background: var(--site-background); }
+.app { min-height: 100vh; width: 100%; border-radius: 0; background-color: light-dark(var(--site-background), #17241f); color: light-dark(var(--site-on-background), #f5efe5); overflow: hidden; position: relative; }
+.hero { background: var(--site-primary); color: var(--site-on-primary); padding: calc(3rem * var(--site-spacing-scale)) 1.2rem calc(3.4rem * var(--site-spacing-scale)); text-align: center; position: relative; }
+.hero:before, .hero:after { content: '✦'; position: absolute; color: #e6c77c; opacity: calc(.65 * var(--site-decoration-opacity)); font-size: 2rem; }
+.hero:before { left: 8%; top: 22%; } .hero:after { right: 8%; bottom: 20%; }
+.eyebrow { text-transform: uppercase; letter-spacing: .2em; font-size: .76rem; color: #e6c77c; }
+h1 { font-family: var(--site-font-heading); font-size: calc(clamp(2.3rem, 7vw, 4.5rem) * var(--site-heading-scale)); line-height: 1.02; margin: .7rem 0 1rem; font-weight: 500; }
+.hero p { max-width: 590px; margin: 0 auto; line-height: 1.65; color: #e9eee9; }
+.hero .rule { width: 80px; height: 2px; background: #e6c77c; margin: 1.5rem auto; }
+main { max-width: 1060px; margin: auto; padding: 2.4rem 1.2rem 4rem; }
+.intro { text-align: center; max-width: 680px; margin: 0 auto 2rem; line-height: 1.6; }
+.intro strong { color: var(--site-secondary); }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(1rem * var(--site-spacing-scale)); }
+.door { min-height: 150px; border: 1px solid #d7c8ad; border-radius: calc(14px * var(--site-radius-scale)); background: #fffaf1; color: #254437; padding: 1rem .6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .45rem; cursor: pointer; position: relative; box-shadow: 0 4px 0 #e5d8c3; transition: transform .18s, box-shadow .18s, background .18s; font: inherit; }
+.door:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 7px 0 #e5d8c3; }
+.door:focus-visible { outline: 3px solid #bd8a29; outline-offset: 3px; }
+.door:disabled { cursor: not-allowed; opacity: .66; background: #e8e0d3; color: #72796f; box-shadow: none; }
+.door.today { border: 2px solid var(--site-secondary); background: #fff3e4; box-shadow: 0 4px 0 #d8a5a0; }
+.door.unlocked { cursor: pointer; opacity: 1; background: #fffaf1; color: #254437; }
+.door.unlocked .label { color: #174a3b; }
+.door .number { font-family: var(--site-font-heading); font-size: 2.2rem; line-height: 1; }
+.door .symbol { font-size: 1.25rem; }
+.door .label { font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; }
+.door .status { position: absolute; top: 9px; right: 10px; font-size: .85rem; }
+.note { margin: 1.6rem auto 0; text-align: center; color: #6b746b; font-size: .88rem; line-height: 1.5; }
+.test-panel { max-width: 560px; margin: 0 auto 1.5rem; padding: 1rem; border: 1px dashed #a62f3b; border-radius: 12px; background: #fffaf1; color: #26372f; text-align: center; }
+.test-panel label { display: inline-flex; align-items: center; gap: .5rem; font-weight: bold; }
+.test-panel select { margin-left: .4rem; padding: .45rem; border: 1px solid #b9aa92; border-radius: 8px; font: inherit; }
+.test-panel small { display: block; margin-top: .5rem; line-height: 1.45; }
+.test-panel[hidden] { display: none; }
+.modal-backdrop { display: none; position: fixed; inset: 0; z-index: 10; background: rgba(10, 24, 18, .72); padding: 1rem; align-items: center; justify-content: center; }
+.modal-backdrop.open { display: flex; }
+.modal { width: min(100%, 480px); background: #fffaf1; color: #26372f; border-radius: 18px; padding: 2rem; text-align: center; position: relative; box-shadow: 0 20px 60px #0005; }
+.close { position: absolute; top: .7rem; right: .8rem; border: 0; background: transparent; font-size: 1.5rem; cursor: pointer; color: #526258; }
+.modal .day { color: var(--site-secondary); text-transform: uppercase; letter-spacing: .15em; font-size: .75rem; }
+.modal h2 { font: 500 2rem/1.15 var(--site-font-heading); margin: .65rem 0; }
+.modal .artist { color: #68756b; margin-bottom: 1.4rem; }
+.listen { display: inline-block; background: var(--site-secondary); color: white; text-decoration: none; padding: .85rem 1.2rem; border-radius: 999px; font-weight: bold; }
+.listen:hover { filter: brightness(1.08); }
+footer { background: #e9dfce; color: #536357; padding: 1.5rem; text-align: center; font-size: .82rem; }
+@media (max-width: 700px) { .grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: .7rem; } .door { min-height: 125px; } }
+@media (max-width: 430px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .door { min-height: 112px; } main { padding-left: .9rem; padding-right: .9rem; } }
+@media (prefers-color-scheme: dark) { .door { background: #273c32; color: #f5efe5; border-color: #52665a; box-shadow: 0 4px 0 #1b2d24; } .door:disabled { background: #303b35; color: #aeb8b0; box-shadow: none; } .door.today { background: #4a332e; } .note { color: #c3cec5; } footer { background: #202e27; color: #c3cec5; } .modal { background: #25382e; color: #f5efe5; } .modal .artist { color: #c3cec5; } .close { color: #e4eae5; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="eyebrow">24 nap • 24 dallam • egy kis ünnepi varázslat</div>
+    <h1>Adventi dallamok</h1>
+    <div class="rule"></div>
+    <p>Egy dal minden napra, hogy a decemberi készülődésbe egy kis mosoly és karácsonyi hangulat is jusson.</p>
+  </header>
+  <main>
+    <div class="intro">Nyiss ki egy ablakot, és hallgasd meg az aznapi meglepetést! <strong>Az aktuális és a korábbi napok dalai elérhetők.</strong></div>
+    <div class="test-panel" id="testPanel" hidden>
+      <label><input type="checkbox" id="testMode"> Tesztmód bekapcsolása</label>
+      <label>Próbanap: <select id="testDay" disabled><option value="1">December 1.</option><option value="5" selected>December 5.</option><option value="17">December 17.</option><option value="24">December 24.</option></select></label>
+      <small>A tesztmód csak ezen a böngészőn változtatja meg a naptár előnézetét. Kikapcsolva a valódi dátum érvényesül.</small>
+    </div>
+    <section class="grid" id="calendar" aria-label="Adventi naptár"></section>
+    <p class="note" id="note" aria-live="polite"></p>
+  </main>
+  <footer>Kellemes adventi készülődést és sok szép dallamot kívánunk! ✨</footer>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="songTitle">
+  <div class="modal">
+    <button class="close" id="closeModal" aria-label="Bezárás">×</button>
+    <div class="day" id="songDay"></div>
+    <h2 id="songTitle"></h2>
+    <div class="artist" id="songArtist"></div>
+    <a class="listen" id="songLink" href="#" target="_blank" rel="noopener noreferrer">▶ Meghallgatom a dalt</a>
+  </div>
+</div>
+<script>
+const songs = [
+  {title:'Száncsengő',artist:'Karácsonyi Zeneklub',q:'Száncsengő karácsonyi dal',url:'https://www.youtube.com/watch?v=BhCmOi_YeTQ'},
+  {title:'Last Christmas',artist:'Wham!',q:'Wham Last Christmas official video',url:'https://www.youtube.com/watch?v=E8gmARGvPlI'},
+  {title:'Hull a pelyhes',artist:'Magyar karácsonyi dal',q:'Hull a pelyhes fehér hó dal',url:'https://www.youtube.com/watch?v=30l7q59bOpo'},
+  {title:'All I Want for Christmas Is You',artist:'Mariah Carey',q:'Mariah Carey All I Want for Christmas Is You official',url:'https://www.youtube.com/watch?v=yXQViqx6GMY'},
+  {title:'Kiskarácsony, nagykarácsony',artist:'Magyar karácsonyi népdal',q:'Kiskarácsony nagykarácsony dal',url:'https://www.youtube.com/watch?v=TqsawJlHqn8'},
+  {title:'Rockin’ Around the Christmas Tree',artist:'Brenda Lee',q:'Brenda Lee Rockin Around the Christmas Tree official',url:'https://www.youtube.com/watch?v=TFsZy9t-qDc'},
+  {title:'Mennyből az angyal',artist:'Magyar karácsonyi ének',q:'Mennyből az angyal karácsonyi ének',url:'https://www.youtube.com/watch?v=KJagKj3Z6TA'},
+  {title:'Jingle Bell Rock',artist:'Bobby Helms',q:'Bobby Helms Jingle Bell Rock official',url:'https://www.youtube.com/watch?v=Z0ajuTaHBtM'},
+  {title:'Ó, szép fenyő',artist:'Magyar karácsonyi ének',q:'Ó szép fenyő magyar karácsonyi dal',url:'https://www.youtube.com/watch?v=ST7bz-civl0'},
+  {title:'Driving Home for Christmas',artist:'Chris Rea',q:'Chris Rea Driving Home for Christmas official',url:'https://www.youtube.com/watch?v=tKAmBAGy1_A'},
+  {title:'Csendes éj',artist:'Magyar karácsonyi ének',q:'Csendes éj magyar karácsonyi ének',url:'https://www.youtube.com/watch?v=WxvPzw6oiuY'},
+  {title:'Feliz Navidad',artist:'José Feliciano',q:'Jose Feliciano Feliz Navidad official',url:'https://www.youtube.com/watch?v=N8NcQzMQN_U'},
+  {title:'Pásztorok, pásztorok',artist:'Magyar karácsonyi ének',q:'Pásztorok pásztorok karácsonyi ének',url:'https://www.youtube.com/watch?v=lQK8SEHdeb4'},
+  {title:'Let It Snow! Let It Snow! Let It Snow!',artist:'Dean Martin',q:'Dean Martin Let It Snow official audio',url:'https://www.youtube.com/watch?v=2TA3IKH8Y5c'},
+  {title:'Diótörő – Virágkeringő',artist:'P. I. Csajkovszkij',q:'Tchaikovsky Waltz of the Flowers Nutcracker',url:'https://www.youtube.com/watch?v=QxHkLdQy5f0'},
+  {title:'Wonderful Christmastime',artist:'Paul McCartney',q:'Paul McCartney Wonderful Christmastime official',url:'https://www.youtube.com/watch?v=94Ye-3C1FC8'},
+  {title:'Add tovább',artist:'Csondor Kata',q:'Csondor Kata Add tovább hivatalos videoklip',url:'https://www.youtube.com/watch?v=wRED8dfTknM'},
+  {title:'Santa Tell Me',artist:'Ariana Grande',q:'Ariana Grande Santa Tell Me official',url:'https://www.youtube.com/watch?v=nlR0MkrRklg'},
+  {title:'White Christmas',artist:'Bing Crosby',q:'Bing Crosby White Christmas official',url:'https://www.youtube.com/watch?v=0Sg5TQwgYz4'},
+  {title:'Ha elmúlik karácsony',artist:'Neoton Família',q:'Neoton Família Ha elmúlik karácsony',url:'https://www.youtube.com/watch?v=bDiNeZaiwoc'},
+  {title:'Do They Know It’s Christmas?',artist:'Band Aid',q:'Band Aid Do They Know Its Christmas official',url:'https://www.youtube.com/watch?v=j3fSknbR7Y4'},
+  {title:'A szürke patás',artist:'Zséda',q:'Zséda A szürke patás Official Music Video',url:'https://www.youtube.com/watch?v=4KLwZTTzXxE'},
+  {title:'Have Yourself a Merry Little Christmas',artist:'Frank Sinatra',q:'Frank Sinatra Have Yourself a Merry Little Christmas',url:'https://www.youtube.com/watch?v=sHVIVNoIPVM'},
+  {title:'Happy Xmas (War Is Over)',artist:'John Lennon & Yoko Ono',q:'John Lennon Happy Xmas War Is Over official',url:'https://www.youtube.com/watch?v=yN4Uu0OlmTg'}
+];
+const calendar = document.getElementById('calendar');
+const note = document.getElementById('note');
+const testPanel = document.getElementById('testPanel');
+const testMode = document.getElementById('testMode');
+const testDay = document.getElementById('testDay');
+// A tesztpanel csak szerkesztői előnézetben vagy a ?teszt=igen linkkel jelenik meg.
+if (location.hostname === 'chatgpt.com' || location.hostname === 'chat.openai.com' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || new URLSearchParams(location.search).get('teszt') === 'igen') testPanel.hidden = false;
+function renderCalendar() {
+  calendar.replaceChildren();
+  const now = new Date();
+  const isDecember = now.getMonth() === 11;
+  const realDay = isDecember && now.getDate() >= 1 && now.getDate() <= 24 ? now.getDate() : 0;
+  const testing = testMode.checked;
+  const dayNow = testing ? Number(testDay.value) : realDay;
+  for (let i = 0; i < 24; i++) {
+    const day = i + 1;
+    const button = document.createElement('button');
+    button.className = 'door';
+    button.type = 'button';
+    const unlocked = dayNow > 0 && day <= dayNow;
+    const canOpen = unlocked;
+    if (day === dayNow && dayNow > 0) button.classList.add('today');
+    if (unlocked && day < dayNow) button.classList.add('unlocked');
+    button.disabled = !canOpen;
+    button.setAttribute('aria-label', canOpen ? `${day}. decemberi dal megnyitása` : `${day}. decemberi ablak – még nem elérhető`);
+    button.innerHTML = `<span class="status">${day === dayNow && dayNow > 0 ? '✦' : (unlocked ? '✓' : '🔒')}</span><span class="number">${String(day).padStart(2,'0')}</span><span class="symbol">${unlocked ? '🎵' : '✧'}</span><span class="label">${day === dayNow && dayNow > 0 ? (testing ? 'Tesztelt nap' : 'Mai meglepetés') : (unlocked ? 'Korábbi dal' : 'Adventi ablak')}</span>`;
+    if (canOpen) button.addEventListener('click', () => openSong(day));
+    calendar.appendChild(button);
+  }
+  if (testing) note.textContent = `TESZTMÓD: december ${dayNow}. napját próbálod. A mai és az összes korábbi nap ablaka nyitható.`;
+  else if (!isDecember) note.textContent = 'A kalendárium december 1-jén indul. Minden nap új ablak nyílik, a korábbi napok dalai pedig továbbra is elérhetők.';
+  else if (realDay === 0) note.textContent = 'Az adventi kalendárium december 1. és 24. között működik. Most egyik ablak sem nyitható ki.';
+  else note.textContent = `Ma december ${realDay}. van — a mai és az összes korábbi nap dala elérhető.`;
+}
+testMode.addEventListener('change', () => { testDay.disabled = !testMode.checked; renderCalendar(); });
+testDay.addEventListener('change', renderCalendar);
+renderCalendar();
+function openSong(day) {
+  const song = songs[day - 1];
+  document.getElementById('songDay').textContent = `December ${day}.`;
+  document.getElementById('songTitle').textContent = song.title;
+  document.getElementById('songArtist').textContent = song.artist;
+  document.getElementById('songLink').href = song.url || ('https://www.youtube.com/results?search_query=' + encodeURIComponent(song.q));
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.getElementById('closeModal').focus();
+}
+function closeSong() { document.getElementById('modalBackdrop').classList.remove('open'); }
+document.getElementById('closeModal').addEventListener('click', closeSong);
+document.getElementById('modalBackdrop').addEventListener('click', e => { if (e.target.id === 'modalBackdrop') closeSong(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSong(); });
+</script>
+</body>
+</html>
